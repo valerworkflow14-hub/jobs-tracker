@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Job Tracker</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 1000px; margin: 40px auto; padding: 0 20px; background: #f5f5f5; }
+  h1 { color: #333; }
+  .stats { background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 20px; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 32px; font-weight: bold; color: #2196F3; }
+  .stat-label { font-size: 12px; color: #666; }
+  .job { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #2196F3; }
+  .job-title { font-size: 18px; font-weight: bold; color: #333; }
+  .job-company { color: #666; margin: 4px 0; }
+  .job-meta { display: flex; gap: 15px; margin-top: 8px; font-size: 13px; color: #888; }
+  .job-link { color: #2196F3; text-decoration: none; }
+  .updated { color: #999; font-size: 12px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<h1>🤖 Job Tracker — автоматический поиск вакансий</h1>
+<div class="updated" id="updated"></div>
+<div class="stats">
+  <div class="stat"><div class="stat-num" id="total">—</div><div class="stat-label">всего вакансий</div></div>
+  <div class="stat"><div class="stat-num" id="remote">—</div><div class="stat-label">удалёнка</div></div>
+  <div class="stat"><div class="stat-num" id="today">—</div><div class="stat-label">сегодня</div></div>
+</div>
+<div id="jobs"></div>
+<script>
+fetch('jobs.json')
+  .then(r => r.json())
+  .then(jobs => {
+    document.getElementById('total').textContent = jobs.length;
+    document.getElementById('updated').textContent = 'Обновлено: ' + new Date().toLocaleDateString('ru-RU');
+    const today = new Date().toISOString().slice(0,10);
+    document.getElementById('today').textContent = jobs.filter(j => j.date_found === today).length;
+    document.getElementById('remote').textContent = jobs.filter(j => j.location && j.location.toLowerCase().includes('remote')).length;
+    const container = document.getElementById('jobs');
+    jobs.forEach(job => {
+      container.innerHTML += `
+        <div class="job">
+          <div class="job-title">${job.title}</div>
+          <div class="job-company">${job.company}</div>
+          <div class="job-meta">
+            <span>📍 ${job.location}</span>
+            <span>💰 ${job.salary}</span>
+            <span>📅 ${job.date_found}</span>
+          </div>
+          <a class="job-link" href="${job.url}" target="_blank">Открыть вакансию →</a>
+        </div>`;
+    });
+  });
+</script>
+</body>
+</html>
