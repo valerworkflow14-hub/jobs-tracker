@@ -5,7 +5,7 @@ from datetime import datetime
 jobs = scrape_jobs(
     site_name=["linkedin", "indeed"],
     search_term="project manager OR operations director",
-    location="Russia",
+    location="worldwide",
     results_wanted=50,
     hours_old=48
 )
